@@ -7,8 +7,8 @@ require_once "../../library/konfigurasi.php";
 //CEK USER
 checkUserSession($db);
 
-// Check if the flagEmployee is set
-if (isset($_POST['flagEmployee']) && $_POST['flagEmployee'] === 'add') {
+// Check if the flagSiswa is set
+if (isset($_POST['flagSiswa']) && $_POST['flagSiswa'] === 'add') {
     $name = $_POST['name'];
     $roleId = $_POST['roleId'];
     $phoneNumber = $_POST['phoneNumber'];
@@ -30,24 +30,24 @@ if (isset($_POST['flagEmployee']) && $_POST['flagEmployee'] === 'add') {
             "pesan" => "Failed to add Employee."
         ]);
     }
-} else if (isset($_POST['flagEmployee']) && $_POST['flagEmployee'] === 'delete') {
-    $employeeId = $_POST['employeeId'];
+} else if (isset($_POST['flagSiswa']) && $_POST['flagSiswa'] === 'delete') {
+    $idSiswa = $_POST['idSiswa'];
 
-    $query = "DELETE FROM employees WHERE employeeId = ?";
-    $result = query($query, [$employeeId]);
+    $query = "DELETE FROM siswa WHERE idSiswa = ?";
+    $result = query($query, [$idSiswa]);
 
     if ($result > 0) {
         echo json_encode([
             "status" => true,
-            "pesan" => "Employee deleted successfully!"
+            "pesan" => "Data Siswa berhasil di hapus!"
         ]);
     } else {
         echo json_encode([
             "status" => false,
-            "pesan" => "Failed to delete Employee: " 
+            "pesan" => "Data Siswa gagal di hapus!: " 
         ]);
     }
-} else if ($_POST['flagEmployee'] && $_POST['flagEmployee'] === 'update') {
+} else if ($_POST['flagSiswa'] && $_POST['flagSiswa'] === 'update') {
     $employeeId = $_POST['employeeId'];
     $name = $_POST['name'];
     $roleId = $_POST['roleId'];

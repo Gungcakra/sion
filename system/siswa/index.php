@@ -6,7 +6,8 @@ require_once "../../library/konfigurasi.php";
 //CEK USER
 checkUserSession($db);
 
-
+$kelas = query("SELECT * FROM kelas", []);
+$angkatan = query("SELECT * FROM angkatan", []);
 ?>
 
 <!DOCTYPE html>
@@ -85,17 +86,28 @@ checkUserSession($db);
                                 </div>
                             </div>
                         </form>
-                        <!-- <div class="ml-2 ">
-                            <select class="custom-select" id="roleIdSearch" name="roleIdSearch" onclick="cariDaftarSiswa()">
-                                <option value="" select>All</option>
+                        <div class="ml-2 ">
+                            <select class="custom-select" id="idKelasSearch" name="idKelasSearch" onclick="cariDaftarSiswa()">
+                                <option value="" select>Semua Kelas</option>
                                 <?php
-                                foreach ($role as $rl) {
+                                foreach ($kelas as $kl) {
 
                                 ?>
-                                    <option value="<?= $rl['roleId'] ?>"><?= $rl['roleName'] ?></option>
+                                    <option value="<?= $kl['idKelas'] ?>"><?= $kl['nama'] ?></option>
                                 <?php  } ?>
                             </select>
-                        </div> -->
+                        </div>
+                        <div class="ml-2 ">
+                            <select class="custom-select" id="idAngkatanSearch" name="idAngkatanSearch" onclick="cariDaftarSiswa()">
+                                <option value="" select>Semua Angkatan</option>
+                                <?php
+                                foreach ($angkatan as $kl) {
+
+                                ?>
+                                    <option value="<?= $kl['idAngkatan'] ?>"><?= $kl['tahunAngkatan'] ?></option>
+                                <?php  } ?>
+                            </select>
+                        </div>
                         <div class="ml-2 ">
                             <select class="custom-select" id="limit" name="limit" onclick="cariDaftarSiswa()">
                                 <option value="10">10</option>

@@ -49,7 +49,7 @@ function prosesSiswa() {
 
 function deleteSiswa(id) {
   Swal.fire({
-    title: "Are You Sure?",
+    title: "Apakah Anda Yakin?",
     text: "Setelah dibatalkan, proses tidak dapat diulangi!",
     icon: "warning",
     showCancelButton: true,
@@ -61,8 +61,8 @@ function deleteSiswa(id) {
         url: "prosesSiswa.php",
         type: "post",
         data: {
-          employeeId: id,
-          flagEmployee: "delete",
+          idSiswa: id,
+          flagSiswa: "delete",
         },
         dataType: "json",
 
@@ -99,36 +99,38 @@ function loadPage(pageNumber) {
   });
 }
 
-function editEmployeeModal(employee) {
-  document.getElementById('employeeId').value = employee.employeeId;
-  document.getElementById('name').value = employee.name;
+function editSiswaModal(siswa) {
+  document.getElementById('idSiswa').value = siswa.idSiswa;
+  document.getElementById('nama').value = siswa.nama;
 
   const roleSelect = document.getElementById('roleId');
-  roleSelect.value = employee.roleId;
-  document.getElementById('phoneNumber').value = employee.phoneNumber;
-  document.getElementById('email').value = employee.email;
-  document.getElementById('address').value = employee.address;
+  roleSelect.value = siswa.roleId;
+  document.getElementById('phoneNumber').value = siswa.phoneNumber;
+  document.getElementById('email').value = siswa.email;
+  document.getElementById('address').value = siswa.address;
 
-  document.getElementById('flagEmployee').value = 'update';
+  document.getElementById('flagSiswa').value = 'update';
 }
 
 
 
 
 
-function caridaftarSiswa() {
+function cariDaftarSiswa() {
 	const searchQuery = $("#searchQuery").val();
-  const roleId = $("#roleIdSearch").val();
+  const idKelas = $("#idKelasSearch").val();
+  const idAngkatan = $("#idAngkatanSearch").val();
   const limit = $("#limit").val();
-	if (searchQuery || roleId || limit) {
+	if (searchQuery || idKelas || limit) {
 		$.ajax({
 			url: "daftarSiswa.php",
 			type: "post",
 			data: {
 				searchQuery: searchQuery,
-				roleId: roleId,
+				idKelas: idKelas,
+				idAngkatan: idAngkatan,
 				limit: limit,
-				flagEmployee: "cari",
+				flagSiswa: "cari",
 			},
 			beforeSend: function () {
 			

@@ -8,7 +8,8 @@ checkUserSession($db);
 
 $flagSiswa = isset($_POST['flagSiswa']) ? $_POST['flagSiswa'] : '';
 $searchQuery = isset($_POST['searchQuery']) ? $_POST['searchQuery'] : '';
-$roleId = isset($_POST['roleId']) ? $_POST['roleId'] : '';
+$idKelas = isset($_POST['idKelas']) ? $_POST['idKelas'] : '';
+$idAngkatan = isset($_POST['idAngkatan']) ? $_POST['idAngkatan'] : '';
 $limit = isset($_POST['limit']) ? $_POST['limit'] : 10;
 $page = isset($_POST['page']) ? $_POST['page'] : 1;
 $offset = ($page - 1) * $limit;
@@ -21,35 +22,35 @@ if ($flagSiswa === 'cari') {
 
   // Filter berdasarkan idKelas
   if (!empty($idKelas)) {
-      $conditions .= " WHERE siswa.idKelas = ?";
-      $params[] = $idKelas;
+    $conditions .= " WHERE siswa.idKelas = ?";
+    $params[] = $idKelas;
   }
 
-  // Filter berdasarkan idAngkatan
   if (!empty($idAngkatan)) {
-      if (!empty($conditions)) {
-          $conditions .= " AND kelas.idAngkatan = ?";
-      } else {
-          $conditions .= " WHERE kelas.idAngkatan = ?";
-      }
-      $params[] = $idAngkatan;
+    if (!empty($conditions)) {
+      $conditions .= " AND angkatan.idAngkatan = ?";
+    } else {
+      $conditions .= " WHERE angkatan.idAngkatan = ?";
+    }
+    $params[] = $idAngkatan;
   }
 
-  // Pencarian berdasarkan nama
+
+
   if (!empty($searchQuery)) {
-      if (!empty($conditions)) {
-          $conditions .= " AND siswa.nama LIKE ?";
-      } else {
-          $conditions .= " WHERE siswa.nama LIKE ?";
-      }
-      $params[] = "%$searchQuery%";
+    if (!empty($conditions)) {
+      $conditions .= " AND siswa.nama LIKE ?";
+    } else {
+      $conditions .= " WHERE siswa.nama LIKE ?";
+    }
+    $params[] = "%$searchQuery%";
   }
 }
 
 // Total data untuk pagination
 $totalQuery = "SELECT COUNT(*) as total 
              FROM siswa 
-             INNER JOIN kelas ON siswa.idKelas = kelas.id
+             INNER JOIN kelas ON siswa.idKelas = kelas.idKelas
              INNER JOIN angkatan ON siswa.idAngkatan = angkatan.idAngkatan " . $conditions;
 $totalResult = query($totalQuery, $params);
 $totalRecords = $totalResult[0]['total'];
@@ -58,16 +59,24 @@ $totalPages = ceil($totalRecords / $limit);
 // Query utama
 $query = "SELECT siswa.*, 
                kelas.nama AS namaKelas, 
-               angkatan.tahunAngkatan 
+               siswa.idSiswa,
+               angkatan.tahunAngkatan, 
+               CASE   
+                   WHEN YEAR(CURDATE()) - angkatan.tahunAngkatan = 0 THEN 'X'
+                   WHEN YEAR(CURDATE()) - angkatan.tahunAngkatan = 1 THEN 'XI'
+                   WHEN YEAR(CURDATE()) - angkatan.tahunAngkatan = 2 THEN 'XII'
+                   ELSE 'Lulus'
+               END AS tingkat 
         FROM siswa 
-        INNER JOIN kelas ON siswa.idKelas = kelas.id
-        INNER JOIN angkatan ON siswa.idAngkatan = angkatan.idAngkatan " . $conditions . 
-        " LIMIT ? OFFSET ?";
+        INNER JOIN kelas ON siswa.idKelas = kelas.idKelas
+        INNER JOIN angkatan ON siswa.idAngkatan = angkatan.idAngkatan " . $conditions .
+  " ORDER BY angkatan.tahunAngkatan DESC LIMIT ? OFFSET ?";
 $params[] = $limit;
 $params[] = $offset;
 
 $siswa = query($query, $params);
 
+$kelas = query("SELECT * FROM kelas", []);
 
 ?>
 
@@ -77,11 +86,13 @@ $siswa = query($query, $params);
       <tr>
         <th scope="col">#</th>
         <th scope="col">Action</th>
-        <th scope="col">Name</th>
-        <th scope="col">Role</th>
-        <th scope="col">Phone Number</th>
-        <th scope="col">Email</th>
-        <th scope="col">Address</th>
+        <th scope="col">NIS</th>
+        <th scope="col">NISN</th>
+        <th scope="col">Nama</th>
+        <th scope="col">Angkatan</th>
+        <th scope="col">Tingkat</th>
+        <th scope="col">Kelas</th>
+        <th scope="col">Status</th>
       </tr>
     </thead>
     <tbody>
@@ -98,19 +109,21 @@ $siswa = query($query, $params);
                 <i class="fa fa-cogs"></i>
               </button>
               <div class="dropdown-menu menu-aksi" aria-labelledby="dropdownMenuButton">
-                <button type="button" class="btn btn-warning btn-sm tombol-dropdown-last" data-toggle="modal" data-target="#employeeModal" onclick="editEmployeeModal(<?= htmlspecialchars(json_encode($rm)) ?>)">
+                <button type="button" class="btn btn-warning btn-sm tombol-dropdown-last" data-toggle="modal" data-target="#siswaModal" onclick="editSiswaModal(<?= htmlspecialchars(json_encode($rm)) ?>)">
                   <i class="fa fa-edit"></i> <strong>EDIT</strong>
                 </button>
-                <button type="button" class="btn btn-danger btn-sm tombol-dropdown-last" onclick="deleteEmployee('<?= $rm['employeeId'] ?>')">
+                <button type="button" class="btn btn-danger btn-sm tombol-dropdown-last" onclick="deleteSiswa('<?= $rm['idSiswa'] ?>')">
                   <i class="fa fa-trash"></i> <strong>DELETE</strong>
                 </button>
               </div>
             </td>
+            <td><?= $rm['nis'] ?></td>
+            <td><?= $rm['nisn'] ?></td>
             <td><?= $rm['nama'] ?></td>
-            <td><?= $rm['roleName'] ?></td>
-            <td><?= $rm['phoneNumber'] ?></td>
-            <td><?= $rm['email'] ?></td>
-            <td><?= $rm['address'] ?></td>
+            <td><?= $rm['tahunAngkatan'] ?></td>
+            <td><?= $rm['tingkat'] ?></td>
+            <td><?= $rm['namaKelas'] ?></td>
+            <td><a class="p-1 text-white rounded font-weight-bold bg-<?= $rm['status'] == "Aktif" ? "success" : "danger"  ?>"><?= $rm['status'] ?></a></td>
           </tr>
         <?php
           $no++;
@@ -152,53 +165,60 @@ $siswa = query($query, $params);
 </div>
 
 <!-- Modal Edit extra -->
-<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="siswaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Employee Form</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Form Siswa</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <form id="formEmployee" method="post">
-          <input autocomplete="off" type="hidden" id="employeeId" name="employeeId">
+        <form id="formSiswa" method="post">
+          <input autocomplete="off" type="hidden" id="idSiswa" name="idSiswa">
           <input autocomplete="off" type="text" id="flagSiswa" name="flagSiswa">
-          <div class="form-group">
-            <label for="extraNumber">Name</label>
-            <input autocomplete="off" type="text" name="name" id="name" class="form-control" placeholder="Add Employee Name" autocomplete="off">
+          <div class="input-group mb-2">
+            <div class="col">
+              <label for="extraNumber">NIS</label>
+              <input autocomplete="off" type="text" name="nis" id="name" class="form-control" placeholder="Masukan NIS Siswa" autocomplete="off">
+            </div>
+            <div class="col">
+              <label for="extraNumber">NISN</label>
+              <input autocomplete="off" type="text" name="nisn" id="name" class="form-control" placeholder="Masukan NISN Siswa" autocomplete="off">
+            </div>
           </div>
-          <div class="form-group">
-            <label for="">Role</label>
-            <select class="custom-select" id="roleId" name="roleId">
-              <option value="">Choose...</option>
-              <?php foreach ($role as $rt): ?>
-                <option value="<?= $rt["roleId"] ?>">
-                  <?= $rt["roleName"] ?>
-                </option>
-              <?php endforeach; ?>
-            </select>
+
+          <div class="input-group mb-2">
+            <div class="col">
+              <label for="extraNumber">Nama</label>
+              <input autocomplete="off" type="text" name="nama" id="name" class="form-control" placeholder="Masukan Nama Siswa" autocomplete="off">
+            </div>
           </div>
-          <div class="form-group">
-            <label for="extraNumber">Phone Number</label>
-            <input autocomplete="off" type="text" name="phoneNumber" id="phoneNumber" class="form-control" placeholder="Add Employee Phone Number" autocomplete="off">
+          <div class="input-group mb-2">
+            <div class="col">
+              <label for="">Kelas</label>
+              <select class="custom-select" id="kelasId" name="kelasId" style="width: 100%">
+                <option value="">Pilih Kelas</option>
+                <?php foreach ($kelas as $kl): ?>
+                  <option value="<?= $kl["idKelas"] ?>">
+                    <?= $kl["nama"] ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+
+
+
+            </div>
           </div>
-          <div class="form-group">
-            <label for="extraNumber">Email</label>
-            <input autocomplete="off" type="text" name="email" id="email" class="form-control" placeholder="Add Employee Email" autocomplete="off">
-          </div>
-          <div class="form-group">
-            <label for="extraNumber">Address</label>
-            <input autocomplete="off" type="text" name="address" id="address" class="form-control" placeholder="Add Employee Adress" autocomplete="off">
-          </div>
+
 
 
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="prosesEmployee()">Save changes</button>
+        <button type="button" class="btn btn-primary" onclick="prosesSiswa()">Save changes</button>
       </div>
     </div>
   </div>
@@ -206,9 +226,16 @@ $siswa = query($query, $params);
 
 
 <script>
+  $(function() {
+    $('#kelasId').select2({
+      placeholder: 'Pilih Kelas',
+      allowClear: true
+    })
+  })
   document.getElementById('flagSiswa').value = 'add';
-  $('#employeeModal').on('hidden.bs.modal', function() {
-    $('#formEmployee')[0].reset();
+  $('#siswaModal').on('hidden.bs.modal', function() {
+    $('#formSiswa')[0].reset();
     document.getElementById('flagSiswa').value = 'add';
+    $('#kelasId').val('').trigger('change');
   });
 </script>
