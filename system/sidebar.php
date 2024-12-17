@@ -10,6 +10,7 @@ $data_menu = [
     'kelas' => 'Kelas',
     'jurusan' => 'Jurusan', // Tambahkan jurusan sebagai navigasi
     'mapel' => 'Mapel',
+    'ruangan' => 'Ruangan',
     'jadwal' => 'Jadwal'
 ];
 ?>

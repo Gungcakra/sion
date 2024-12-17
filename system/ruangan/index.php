@@ -6,8 +6,6 @@ require_once "../../library/konfigurasi.php";
 //CEK USER
 checkUserSession($db);
 
-$kelas = query("SELECT * FROM kelas", []);
-$angkatan = query("SELECT * FROM angkatan", []);
 ?>
 
 <!DOCTYPE html>
@@ -72,56 +70,47 @@ $angkatan = query("SELECT * FROM angkatan", []);
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">DATA SISWA</h1>
+                        <h1 class="h3 mb-0 text-gray-800">DATA RUANGAN</h1>
                     </div>
 
                     <div class="row d-flex shadow p-2">
                         <form class="d-none d-sm-inline-block form-inline ml-md-3 my-2 my-md-0 mw-100 navbar-search border">
                             <div class="input-group">
-                                <input type="text" class="form-control bg-light border-0 small" placeholder="Cari Nama Siswa" aria-label="Search" aria-describedby="basic-addon2" id="searchQuery" onkeyup="cariDaftarSiswa()" autocomplete="off">
+                                <input type="text" class="form-control bg-light border-0 small" placeholder="Cari Kelas" aria-label="Search" aria-describedby="basic-addon2" id="searchQuery" onkeyup="cariDaftarRuangan()" autocomplete="off">
                                 <div class="input-group-append">
-                                    <button class="btn btn-primary" type="button" onclick="cariDaftarSiswa()">
+                                    <button class="btn btn-primary" type="button" onclick="cariDaftarRuangan()">
                                         <i class="fas fa-search fa-sm"></i>
                                     </button>
                                 </div>
                             </div>
                         </form>
-                        <div class="ml-2 col-2 p-0">
-                            <select class="custom-select" id="idKelasSearch" name="idKelasSearch" onclick="cariDaftarSiswa()">
-                                <option value="" select>Semua Kelas</option>
+                        <!-- <div class="ml-2 col-2 p-0">
+                            <select class="custom-select" id="idKelasSearch" name="idKelasSearch" onclick="cariDaftarRuangan()">
+                                <option value="" select>Semua Jurusan</option>
                                 <?php
-                                foreach ($kelas as $kl) {
+                                foreach ($jurusan as $jr) {
 
                                 ?>
-                                    <option value="<?= $kl['idKelas'] ?>"><?= $kl['nama'] ?></option>
+                                    <option value="<?= $jr['idJurusan'] ?>"><?= $jr['namaJurusan'] ?></option>
                                 <?php  } ?>
                             </select>
-                        </div>
+                        </div> -->
+                      
+                        
                         <div class="ml-2 ">
-                            <select class="custom-select" id="idAngkatanSearch" name="idAngkatanSearch" onclick="cariDaftarSiswa()">
-                                <option value="" select>Semua Angkatan</option>
-                                <?php
-                                foreach ($angkatan as $kl) {
-
-                                ?>
-                                    <option value="<?= $kl['idAngkatan'] ?>"><?= $kl['tahunAngkatan'] ?></option>
-                                <?php  } ?>
-                            </select>
-                        </div>
-                        <div class="ml-2 ">
-                            <select class="custom-select" id="limit" name="limit" onclick="cariDaftarSiswa()">
+                            <select class="custom-select" id="limit" name="limit" onclick="cariDaftarRuangan()">
                                 <option value="10">10</option>
                                 <option value="20">20</option>
                                 <option value="50">50</option>
                                 <option value="100">100</option>
                             </select>
                         </div>
-                        <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm ml-auto" data-toggle="modal" data-target="#siswaModal">
-                            <i class="fas fa-plus fa-sm text-white"></i> Tambah Siswa
+                        <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm ml-auto" data-toggle="modal" data-target="#ruanganModal">
+                            <i class="fas fa-plus fa-sm text-white"></i> Tambah Ruangan
                         </button>
                     </div>
 
-                    <div class="row" id="daftarSiswa">
+                    <div class="row" id="daftarRuangan">
                     </div>
 
                 </div>
@@ -181,7 +170,7 @@ $angkatan = query("SELECT * FROM angkatan", []);
     <!-- Page level custom scripts -->
     <script src="<?= BASE_URL_HTML ?>/js/demo/chart-area-demo.js"></script>
     <script src="<?= BASE_URL_HTML ?>/js/demo/chart-pie-demo.js"></script>
-    <script src="<?= BASE_URL_HTML ?>/system/siswa/siswa.js"></script>
+    <script src="<?= BASE_URL_HTML ?>/system/ruangan/ruangan.js"></script>
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 

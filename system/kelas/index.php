@@ -85,7 +85,7 @@ $jurusan = query("SELECT * FROM jurusan",[])
                                 </div>
                             </div>
                         </form>
-                        <div class="ml-2 ">
+                        <div class="ml-2 col-2 p-0">
                             <select class="custom-select" id="idKelasSearch" name="idKelasSearch" onclick="cariDaftarKelas()">
                                 <option value="" select>Semua Jurusan</option>
                                 <?php
