@@ -1,32 +1,32 @@
 document.addEventListener("DOMContentLoaded", function (event) {
-  daftarSiswa();
+  daftarKelas();
 });
-function daftarSiswa() {
+function daftarKelas() {
   $.ajax({
-    url: "daftarSiswa.php",
+    url: "daftarKelas.php",
     type: "post",
     data: {
-      flagSiswa: "daftar",
+      flagKelas: "daftar",
     },
     beforeSend: function () {
       $(".overlay").show();
     },
     success: function (data, status) {
-      $("#daftarSiswa").html(data);
+      $("#daftarKelas").html(data);
       $(".overlay").hide();
     },
   });
 }
 
-function prosesSiswa() {
-const prosesSiswa = document.getElementById("formSiswa");
-const dataForm = new FormData(prosesSiswa);
+function prosesKelas() {
+  const formKelas = document.getElementById("formKelas");
+  const dataForm = new FormData(formKelas);
 
-  $("#siswaModal").modal("hide");
+  $("#kelasModal").modal("hide");
 
-  $("#siswaModal").on("hidden.bs.modal", function () {
+  $("#kelasModal").on("hidden.bs.modal", function () {
     $.ajax({
-      url: "prosesSiswa.php",
+      url: "prosesKelas.php",
       type: "post",
       enctype: "multipart/form-data",
       processData: false,
@@ -37,7 +37,7 @@ const dataForm = new FormData(prosesSiswa);
         console.log(data);
         const { status, pesan } = data;
         notifikasi(status, pesan);
-        daftarSiswa();
+        daftarKelas();
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.error("Error:", textStatus, errorThrown);
@@ -46,7 +46,7 @@ const dataForm = new FormData(prosesSiswa);
   });
 }
 
-function deleteSiswa(id) {
+function deleteKelas(id) {
   Swal.fire({
     title: "Apakah Anda Yakin?",
     text: "Setelah dibatalkan, proses tidak dapat diulangi!",
@@ -57,18 +57,18 @@ function deleteSiswa(id) {
   }).then(function (result) {
     if (result.isConfirmed) {
       $.ajax({
-        url: "prosesSiswa.php",
+        url: "prosesKelas.php",
         type: "post",
         data: {
-          idSiswa: id,
-          flagSiswa: "delete",
+          idKelas: id,
+          flagKelas: "delete",
         },
         dataType: "json",
 
         success: function (data) {
           const { status, pesan } = data;
           notifikasi(status, pesan);
-          daftarSiswa();
+          daftarKelas();
         },
         error: function (jqXHR, textStatus, errorThrown) {
           console.error("Error:", textStatus, errorThrown);
@@ -85,15 +85,15 @@ function loadPage(pageNumber) {
   const limit = $("#limit").val();
   $.ajax({
     type: "POST",
-    url: "daftarSiswa.php",
+    url: "daftarKelas.php",
     data: {
-      flagEmployee: "cari",
+      flagKelas: "cari",
       page: pageNumber,
       searchQuery: $("#searchQuery").val(),
       limit: limit,
     },
     success: function (data) {
-      $("#daftarSiswa").html(data);
+      $("#daftarKelas").html(data);
     },
   });
 }
@@ -101,56 +101,45 @@ function loadPage(pageNumber) {
 // $(document).ready(function () {
 //   $('#idKelas').select2();
 // });
-function editSiswaModal(siswa) {
-  document.getElementById("idSiswa").value = siswa.idSiswa;
-  document.getElementById("nis").value = siswa.nis;
-  document.getElementById("nisn").value = siswa.nisn;
-  document.getElementById("nama").value = siswa.nama;
-  document.getElementById("namaAyah").value = siswa.namaAyah;
-  document.getElementById("namaIbu").value = siswa.namaIbu;
-  document.getElementById("noTelp").value = siswa.noTelp;
-  document.getElementById("tglLahir").value = siswa.tglLahir;
-
-  const selectKelas = document.getElementById("idKelas");
-  selectKelas.value = siswa.idKelas;
-  const selectAngkatan = document.getElementById("idAngkatan");
-  selectAngkatan.value = siswa.idAngkatan;
-  document.getElementById("alamat").value = siswa.alamat;
-
-  document.getElementById("flagSiswa").value = "update";
+function editKelasModal(kelas) {
+  console.log(kelas.idJurusan)
+  document.getElementById("idKelas").value = kelas.idKelas;
+  document.getElementById("nama").value = kelas.nama;
+  document.getElementById("kode").value = kelas.kode;
+  const selectJurusan = document.getElementById("idJurusan");
+  selectJurusan.value = kelas.idJurusan;
+  document.getElementById("flagKelas").value = "update";
 }
 
-function cariDaftarSiswa() {
+function cariDaftarKelas() {
   const searchQuery = $("#searchQuery").val();
-  const idKelas = $("#idKelasSearch").val();
-  const idAngkatan = $("#idAngkatanSearch").val();
+  const idJurusan = $("#idKelasSearch").val();
   const limit = $("#limit").val();
-  if (searchQuery || idKelas || limit) {
+  if (searchQuery || idJurusan || limit) {
     $.ajax({
-      url: "daftarSiswa.php",
+      url: "daftarKelas.php",
       type: "post",
       data: {
         searchQuery: searchQuery,
-        idKelas: idKelas,
-        idAngkatan: idAngkatan,
+        idJurusan: idJurusan,
         limit: limit,
-        flagSiswa: "cari",
+        flagKelas: "cari",
       },
       beforeSend: function () {},
       success: function (data, status) {
-        $("#daftarSiswa").html(data);
+        $("#daftarKelas").html(data);
       },
     });
   } else {
     $.ajax({
-      url: "daftarSiswa.php",
+      url: "daftarKelas.php",
       type: "post",
       data: {
-        flagEmployee: "daftar",
+        flagKelas: "daftar",
       },
       beforeSend: function () {},
       success: function (data, status) {
-        $("#daftarSiswa").html(data);
+        $("#daftarKelas").html(data);
       },
     });
   }

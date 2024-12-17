@@ -1,10 +1,17 @@
 <?php
-
-
 // Fungsi untuk mendapatkan nama direktori saat ini
-
 $current_dir = getCurrentDirectory();
 
+// Daftar menu dalam DATA
+$data_menu = [
+    'user' => 'User',
+    'siswa' => 'Siswa',
+    'pegawai' => 'Pegawai',
+    'kelas' => 'Kelas',
+    'mapel' => 'Mapel',
+    'jadwal' => 'Jadwal',
+    'jurusan' => 'Jurusan' // Tambahkan jurusan sebagai navigasi
+];
 ?>
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -13,7 +20,7 @@ $current_dir = getCurrentDirectory();
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">SION <sup></sup></div>
+        <div class="sidebar-brand-text mx-3">SION</div>
     </a>
 
     <!-- Divider -->
@@ -23,58 +30,32 @@ $current_dir = getCurrentDirectory();
     <li class="nav-item <?= ($current_dir == BASE_URL_HTML . '/system') ? 'active' : '' ?>">
         <a class="nav-link" href="<?= BASE_URL_HTML ?>/system/">
             <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span></a>
+            <span>Dashboard</span>
+        </a>
     </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider">
 
-
-
-    <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item <?= ($current_dir == BASE_URL_HTML . '/system/extra' || $current_dir == BASE_URL_HTML . '/system/room' || $current_dir == BASE_URL_HTML . '/system/employee' || $current_dir == BASE_URL_HTML . '/system/guest' || $current_dir == BASE_URL_HTML . '/system/role' || $current_dir == BASE_URL_HTML . '/system/user' || $current_dir == BASE_URL_HTML . '/system/role' || $current_dir == BASE_URL_HTML . '/system/reservation' || $current_dir == BASE_URL_HTML . '/system/roomType') ? 'active' : '' ?>">
-
-        <a class="nav-link" data-toggle="collapse" data-target="#collapseTwo"
-            aria-expanded="<?= ($current_dir == BASE_URL_HTML . '/system/extra' || $current_dir == BASE_URL_HTML . '/system/role' || $current_dir == BASE_URL_HTML . '/system/user' || $current_dir == BASE_URL_HTML . '/system/role' || $current_dir == BASE_URL_HTML . '/system/reservation' || $current_dir == BASE_URL_HTML . '/system/roomType' || $current_dir == BASE_URL_HTML . '/system/room' || $current_dir == BASE_URL_HTML . '/system/employee' || $current_dir == BASE_URL_HTML . '/system/guest') ? 'true' : 'false' ?>" aria-controls="collapseTwo">
+    <!-- Nav Item - DATA -->
+    <?php 
+    $data_active = in_array(str_replace(BASE_URL_HTML . '/system/', '', $current_dir), array_keys($data_menu));
+    ?>
+    <li class="nav-item <?= $data_active ? 'active' : '' ?>">
+        <a class="nav-link" data-toggle="collapse" data-target="#collapseData" 
+            aria-expanded="<?= $data_active ? 'true' : 'false' ?>" aria-controls="collapseData">
             <i class="fas fa-fw fa-database"></i>
             <span>DATA</span>
         </a>
-       <div id="collapseTwo" class="collapse <?= ($current_dir == BASE_URL_HTML . '/system/user' || $current_dir == BASE_URL_HTML . '/system/siswa' || $current_dir == BASE_URL_HTML . '/system/pegawai' || $current_dir == BASE_URL_HTML . '/system/kelas' || $current_dir == BASE_URL_HTML . '/system/mapel' || $current_dir == BASE_URL_HTML . '/system/jadwal') ? 'show' : '' ?>" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-    <div class="py-2 collapse-inner rounded">
-        <a class="collapse-item font-weight-bold text-white <?= $current_dir == BASE_URL_HTML . '/system/user' ? 'bg-white text-dark' : '' ?>" href="<?= BASE_URL_HTML ?>/system/user/">User</a>
-        <a class="collapse-item font-weight-bold text-white <?= $current_dir == BASE_URL_HTML . '/system/siswa' ? 'bg-white text-dark' : '' ?>" href="<?= BASE_URL_HTML ?>/system/siswa/">Siswa</a>
-        <a class="collapse-item font-weight-bold text-white <?= $current_dir == BASE_URL_HTML . '/system/pegawai' ? 'bg-white text-dark' : '' ?>" href="<?= BASE_URL_HTML ?>/system/pegawai/">Pegawai</a>
-        <a class="collapse-item font-weight-bold text-white <?= $current_dir == BASE_URL_HTML . '/system/kelas' ? 'bg-white text-dark' : '' ?>" href="<?= BASE_URL_HTML ?>/system/kelas/">Kelas</a>
-        <a class="collapse-item font-weight-bold text-white <?= $current_dir == BASE_URL_HTML . '/system/mapel' ? 'bg-white text-dark' : '' ?>" href="<?= BASE_URL_HTML ?>/system/mapel/">Mapel</a>
-        <a class="collapse-item font-weight-bold text-white <?= $current_dir == BASE_URL_HTML . '/system/jadwal' ? 'bg-white text-dark' : '' ?>" href="<?= BASE_URL_HTML ?>/system/jadwal/">Jadwal</a>
-    </div>
-</div>
-    </li>
-
-
-
-
-    <li class="nav-item <?= ($current_dir == BASE_URL_HTML . '/operational/reservation' || $current_dir == BASE_URL_HTML . '/operational/report' ) ? 'active' : '' ?>">
-
-        <a class="nav-link" data-toggle="collapse" data-target="#collapseThree"
-            aria-expanded="<?= ($current_dir == BASE_URL_HTML . '/operational/reservation' || $current_dir == BASE_URL_HTML . '/operational/report') ? 'true' : 'false' ?>" aria-controls="collapseThree">
-            <i class="fas fa-fw fa-briefcase"></i>
-            <span>OPERATIONAL</span>
-        </a>
-        <div id="collapseThree" class="collapse <?= ($current_dir == BASE_URL_HTML . '/operational/reservation' || $current_dir == BASE_URL_HTML . '/operational/report') ? 'show' : '' ?>" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseData" class="collapse <?= $data_active ? 'show' : '' ?>" data-parent="#accordionSidebar">
             <div class="py-2 collapse-inner rounded">
-                <a class="collapse-item font-weight-bold text-white <?= $current_dir == BASE_URL_HTML . '/operational/reservation' ? 'bg-white text-dark' : '' ?>" href="<?= BASE_URL_HTML ?>/operational/reservation/">Reservation</a>
-
-                <div class="py-2 collapse-inner rounded">
-                    <a class="collapse-item font-weight-bold text-white <?= $current_dir == BASE_URL_HTML . '/operational/report' ? 'bg-white text-dark' : '' ?>" href="<?= BASE_URL_HTML ?>/operational/report/">Report</a>
-        
-                </div>
+                <?php foreach ($data_menu as $key => $value): ?>
+                    <a class="collapse-item font-weight-bold text-white <?= ($current_dir == BASE_URL_HTML . "/system/$key") ? 'bg-white text-dark' : '' ?>" 
+                       href="<?= BASE_URL_HTML ?>/system/<?= $key ?>/"><?= $value ?></a>
+                <?php endforeach; ?>
             </div>
         </div>
-     
     </li>
-
-
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
@@ -83,7 +64,4 @@ $current_dir = getCurrentDirectory();
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
-
-
-
 </ul>

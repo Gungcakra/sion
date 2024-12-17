@@ -58,7 +58,7 @@ $totalPages = ceil($totalRecords / $limit);
 
 // Query utama
 $query = "SELECT siswa.*, 
-               kelas.nama AS namaKelas, 
+               kelas.kode AS kodeKelas, 
                siswa.idSiswa,
                angkatan.tahunAngkatan, 
                CASE   
@@ -77,7 +77,9 @@ $params[] = $offset;
 $siswa = query($query, $params);
 
 $kelas = query("SELECT * FROM kelas", []);
+$angkatan = query("SELECT * FROM angkatan", []);
 
+// var_dump($siswa[0])
 ?>
 
 <div class="card shadow mb-2 w-100">
@@ -122,7 +124,7 @@ $kelas = query("SELECT * FROM kelas", []);
             <td><?= $rm['nama'] ?></td>
             <td><?= $rm['tahunAngkatan'] ?></td>
             <td><?= $rm['tingkat'] ?></td>
-            <td><?= $rm['namaKelas'] ?></td>
+            <td><?= $rm['kodeKelas'] ?></td>
             <td><a class="p-1 text-white rounded font-weight-bold bg-<?= $rm['status'] == "Aktif" ? "success" : "danger"  ?>"><?= $rm['status'] ?></a></td>
           </tr>
         <?php
@@ -177,28 +179,44 @@ $kelas = query("SELECT * FROM kelas", []);
       <div class="modal-body">
         <form id="formSiswa" method="post">
           <input autocomplete="off" type="hidden" id="idSiswa" name="idSiswa">
-          <input autocomplete="off" type="text" id="flagSiswa" name="flagSiswa">
+          <input autocomplete="off" type="hidden" id="flagSiswa" name="flagSiswa">
           <div class="input-group mb-2">
             <div class="col">
               <label for="extraNumber">NIS</label>
-              <input autocomplete="off" type="text" name="nis" id="name" class="form-control" placeholder="Masukan NIS Siswa" autocomplete="off">
+              <input autocomplete="off" type="text" name="nis" id="nis" class="form-control" placeholder="Masukan NIS Siswa" autocomplete="off">
             </div>
             <div class="col">
               <label for="extraNumber">NISN</label>
-              <input autocomplete="off" type="text" name="nisn" id="name" class="form-control" placeholder="Masukan NISN Siswa" autocomplete="off">
+              <input autocomplete="off" type="text" name="nisn" id="nisn" class="form-control" placeholder="Masukan NISN Siswa" autocomplete="off">
             </div>
           </div>
 
           <div class="input-group mb-2">
             <div class="col">
               <label for="extraNumber">Nama</label>
-              <input autocomplete="off" type="text" name="nama" id="name" class="form-control" placeholder="Masukan Nama Siswa" autocomplete="off">
+              <input autocomplete="off" type="text" name="nama" id="nama" class="form-control" placeholder="Masukan Nama Siswa" autocomplete="off">
+            </div>
+          </div>
+          <div class="input-group mb-2">
+            <div class="col">
+              <label for="extraNumber">Tanggal Lahir</label>
+              <input autocomplete="off" type="date" name="tglLahir" id="tglLahir" class="form-control" autocomplete="off">
+            </div>
+            <div class="col">
+              <label for="extraNumber">No Telp</label>
+              <input autocomplete="off" type="text" name="noTelp" id="noTelp" class="form-control" autocomplete="off" placeholder="Masukan Nomor Telp Siswa">
+            </div>
+          </div>
+          <div class="input-group mb-2">
+            <div class="col">
+              <label for="extraNumber">Alamat</label>
+              <input autocomplete="off" type="text" name="alamat" id="alamat" class="form-control" placeholder="Masukan Alamat" autocomplete="off">
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="col">
               <label for="">Kelas</label>
-              <select class="custom-select" id="kelasId" name="kelasId" style="width: 100%">
+              <select class="custom-select" id="idKelas" name="idKelas" style="width: 100%">
                 <option value="">Pilih Kelas</option>
                 <?php foreach ($kelas as $kl): ?>
                   <option value="<?= $kl["idKelas"] ?>">
@@ -206,9 +224,28 @@ $kelas = query("SELECT * FROM kelas", []);
                   </option>
                 <?php endforeach; ?>
               </select>
+            </div>
 
-
-
+            <div class="col">
+              <label for="">Angkatan</label>
+              <select class="custom-select" id="idAngkatan" name="idAngkatan" style="width: 100%">
+                <option value="">Pilih Angkatan</option>
+                <?php foreach ($angkatan as $kl): ?>
+                  <option value="<?= $kl["idAngkatan"] ?>">
+                    <?= $kl["tahunAngkatan"] ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+          </div>
+          <div class="input-group mb-2">
+            <div class="col">
+              <label for="extraNumber">Nama Ayah</label>
+              <input autocomplete="off" type="text" name="namaAyah" id="namaAyah" class="form-control" placeholder="Masukan Nama Ayah Siswa" autocomplete="off">
+            </div>
+            <div class="col">
+              <label for="extraNumber">Nama Ibu</label>
+              <input autocomplete="off" type="text" name="namaIbu" id="namaIbu" class="form-control" placeholder="Masukan Nama Ibu Siswa" autocomplete="off">
             </div>
           </div>
 
@@ -226,16 +263,9 @@ $kelas = query("SELECT * FROM kelas", []);
 
 
 <script>
-  $(function() {
-    $('#kelasId').select2({
-      placeholder: 'Pilih Kelas',
-      allowClear: true
-    })
-  })
   document.getElementById('flagSiswa').value = 'add';
   $('#siswaModal').on('hidden.bs.modal', function() {
     $('#formSiswa')[0].reset();
     document.getElementById('flagSiswa').value = 'add';
-    $('#kelasId').val('').trigger('change');
   });
 </script>
