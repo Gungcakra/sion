@@ -8,9 +8,9 @@ $data_menu = [
     'siswa' => 'Siswa',
     'pegawai' => 'Pegawai',
     'kelas' => 'Kelas',
+    'jurusan' => 'Jurusan', // Tambahkan jurusan sebagai navigasi
     'mapel' => 'Mapel',
-    'jadwal' => 'Jadwal',
-    'jurusan' => 'Jurusan' // Tambahkan jurusan sebagai navigasi
+    'jadwal' => 'Jadwal'
 ];
 ?>
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
@@ -20,7 +20,7 @@ $data_menu = [
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">SION</div>
+        <div class="sidebar-brand-text mx-3">SION ESEMKA</div>
     </a>
 
     <!-- Divider -->
