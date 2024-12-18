@@ -7,6 +7,7 @@ $data_menu = [
     'user' => 'User',
     'siswa' => 'Siswa',
     'pegawai' => 'Pegawai',
+    'jabatan' => 'Jabatan',
     'kelas' => 'Kelas',
     'jurusan' => 'Jurusan', // Tambahkan jurusan sebagai navigasi
     'mapel' => 'Mapel',
