@@ -93,19 +93,24 @@ $angkatan = query("SELECT * FROM angkatan", []);
                                 foreach ($kelas as $kl) {
 
                                 ?>
-                                    <option value="<?= $kl['idKelas'] ?>"><?= $kl['nama'] ?></option>
+                                    <option value="<?= $kl['idKelas'] ?>"><?= $kl['kode'] ?></option>
                                 <?php  } ?>
                             </select>
                         </div>
                         <div class="ml-2 ">
-                            <select class="custom-select" id="idAngkatanSearch" name="idAngkatanSearch" onclick="cariDaftarSiswa()">
-                                <option value="" select>Semua Angkatan</option>
-                                <?php
-                                foreach ($angkatan as $kl) {
-
-                                ?>
-                                    <option value="<?= $kl['idAngkatan'] ?>"><?= $kl['tahunAngkatan'] ?></option>
-                                <?php  } ?>
+                            <select class="custom-select" id="idAngkatanSearch" name="idAngkatanSearch" onchange="cariDaftarSiswa()">
+                                <option value="" selected>Semua Tingkat</option>
+                                <?php foreach ($angkatan as $kl): ?>
+                                    <?php
+                                    $selisihTahun = date('Y') - $kl['tahunAngkatan'];
+                                    if ($selisihTahun == 0): ?>
+                                        <option value="<?= htmlspecialchars($kl['idAngkatan']) ?>">X</option>
+                                    <?php elseif ($selisihTahun == 1): ?>
+                                        <option value="<?= htmlspecialchars($kl['idAngkatan']) ?>">XI</option>
+                                    <?php elseif ($selisihTahun == 2): ?>
+                                        <option value="<?= htmlspecialchars($kl['idAngkatan']) ?>">XII</option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="ml-2 ">
