@@ -21,16 +21,16 @@ if ($flagKelas === 'cari') {
 
   // Filter berdasarkan idKela
 
-if (!empty($idJurusan)) {
-  if (!empty($conditions)) {
-    $conditions .= " AND kelas.idJurusan = ?";
-  } else {
-    $conditions .= " WHERE kelas.idJurusan = ?";
+  if (!empty($idJurusan)) {
+    if (!empty($conditions)) {
+      $conditions .= " AND kelas.idJurusan = ?";
+    } else {
+      $conditions .= " WHERE kelas.idJurusan = ?";
+    }
+    $params[] = $idJurusan;
   }
-  $params[] = $idJurusan;
-}
 
- if (!empty($searchQuery)) {
+  if (!empty($searchQuery)) {
     if (!empty($conditions)) {
       $conditions .= " AND (kelas.nama LIKE ? OR jurusan.namaJurusan LIKE ?)";
     } else {
@@ -61,6 +61,7 @@ $params[] = $offset;
 
 $kelas = query($query, $params);
 $jurusan = query("SELECT * FROM jurusan", []);
+$siswa = query("SELECT * FROM siswa", []);
 
 // var_dump($siswa[0])
 ?>
@@ -73,6 +74,7 @@ $jurusan = query("SELECT * FROM jurusan", []);
         <th scope="col">Action</th>
         <th scope="col">Kelas</th>
         <th scope="col">Jurusan</th>
+        <th scope="col">Detail</th>
       </tr>
     </thead>
     <tbody>
@@ -95,10 +97,19 @@ $jurusan = query("SELECT * FROM jurusan", []);
                 <button type="button" class="btn btn-danger btn-sm tombol-dropdown-last" onclick="deleteKelas('<?= $rm['idKelas'] ?>')">
                   <i class="fa fa-trash"></i> <strong>DELETE</strong>
                 </button>
+                <button type="button" class="btn btn-info btn-sm tombol-dropdown-last" onclick="loadDetailKelas('<?= $rm['idKelas'] ?>')">
+                  <i class="fa fa-info-circle"></i> <strong>DETAIL</strong>
+                </button>
               </div>
             </td>
             <td><?= $rm['kode'] ?></td>
             <td><?= $rm['namaJurusan'] ?></td>
+
+            <td>
+              <button type="button" class="btn btn-info btn-sm" onclick="loadDetailKelas('<?= $rm['idKelas'] ?>')">
+                <i class="fa fa-info-circle"></i> Detail
+              </button>
+            </td>
           </tr>
         <?php
           $no++;
@@ -140,50 +151,42 @@ $jurusan = query("SELECT * FROM jurusan", []);
 </div>
 
 <!-- Modal Edit extra -->
-<div class="modal fade" id="kelasModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="kelasModal" tabindex="-1" aria-labelledby="kelasModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Form Kelas</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h5 class="modal-title" id="kelasModalLabel">Form Kelas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="formKelas" method="post">
-          <input autocomplete="off" type="hidden" id="idKelas" name="idKelas">
-          <input autocomplete="off" type="hidden" id="flagKelas" name="flagKelas">
-          <div class="input-group mb-2">
+          <input type="hidden" id="idKelas" name="idKelas" autocomplete="off">
+          <input type="hidden" id="flagKelas" name="flagKelas" autocomplete="off">
+          <div class="row mb-3">
             <div class="col">
-              <label for="extraNumber">Nama Kelas</label>
-              <input autocomplete="off" type="text" name="nama" id="nama" class="form-control" placeholder="Masukan Nama Kelas" autocomplete="off">
+              <label for="nama" class="form-label">Nama Kelas</label>
+              <input type="text" name="nama" id="nama" class="form-control" placeholder="Masukkan Nama Kelas" autocomplete="off">
             </div>
             <div class="col">
-              <label for="extraNumber">Kode Kelas</label>
-              <input autocomplete="off" type="text" name="kode" id="kode" class="form-control" placeholder="Masukan Kode Kelas" autocomplete="off">
+              <label for="kode" class="form-label">Kode Kelas</label>
+              <input type="text" name="kode" id="kode" class="form-control" placeholder="Masukkan Kode Kelas" autocomplete="off">
             </div>
           </div>
-          <div class="input-group mb-2">
+          <div class="row mb-3">
             <div class="col">
-              <label for="">Jurusan</label>
-              <select class="custom-select" id="idJurusan" name="idJurusan" style="width: 100%">
+              <label for="idJurusan" class="form-label">Jurusan</label>
+              <select class="form-select" id="idJurusan" name="idJurusan" style="width: 100%;">
                 <option value="">Pilih Jurusan</option>
                 <?php foreach ($jurusan as $jr): ?>
-                  <option value="<?= $jr["idJurusan"] ?>">
-                    <?= $jr["namaJurusan"] ?>
-                  </option>
+                  <option value="<?= $jr["idJurusan"] ?>"><?= $jr["namaJurusan"] ?></option>
                 <?php endforeach; ?>
               </select>
             </div>
-
           </div>
-
-
-
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" onclick="prosesKelas()">Save changes</button>
       </div>
     </div>
@@ -191,10 +194,126 @@ $jurusan = query("SELECT * FROM jurusan", []);
 </div>
 
 
+
+<!-- Modal Detail Kelas -->
+<div class="modal fade" id="detailKelasModal" tabindex="-1" aria-labelledby="detailKelasLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailKelasLabel">Detail Kelas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formDetailKelas" method="post">
+          <input autocomplete="off" type="hidden" id="detailIdKelas" name="idKelas">
+          <input autocomplete="off" type="hidden" id="detailIdSiswa" name="idSiswa">
+
+          <!-- Siswa Selection -->
+          <div class="form-group mb-4">
+            <label for="idSiswaSelect" class="font-weight-bold">Siswa</label>
+            <div class="input-group">
+              <select class="form-select" id="idSiswaSelect" name="idSiswaSelect" data-live-search="true">
+                <option value="">Pilih Siswa</option>
+                <?php foreach ($siswa as $rt): ?>
+                  <option value="<?= $rt["idSiswa"] ?>"><?= $rt["nama"] ?></option>
+                <?php endforeach; ?>
+              </select>
+              <div class="input-group-append">
+                <button type="button" class="btn btn-primary" onclick="addSiswaToKelas()">Add Siswa</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Guru and Kelas Selection (Horizontal Layout) -->
+          <div class="form-row mb-4">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="idGuruSelect" class="font-weight-bold">Guru</label>
+                <select class="form-select" id="idGuruSelect" name="idGuruSelect" data-live-search="true">
+                  <option value="">Pilih Guru</option>
+                  <?php foreach ($guru as $gr): ?>
+                    <option value="<?= $gr["idGuru"] ?>"><?= $gr["nama"] ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="idKelasSelect" class="font-weight-bold">Kelas</label>
+                <select class="form-select" id="idKelasSelect" name="idKelasSelect" data-live-search="true">
+                  <option value="">Pilih Kelas</option>
+                  <?php foreach ($kelas as $kl): ?>
+                    <option value="<?= $kl["idKelas"] ?>"><?= $kl["nama"] ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </form>
+
+        <!-- Table for Displaying Siswa in Kelas -->
+        <table class="table table-striped mt-3">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">NIS</th>
+              <th scope="col">Nama Siswa</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="detailKelasTableBody">
+            <!-- Table rows will be populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 <script>
+  $(document).ready(function() {
+    $('#detailKelasModal').on('shown.bs.modal', function() {
+      // Inisialisasi Select2 saat modal ditampilkan
+      $('#idSiswaSelect').select2({
+        dropdownParent: $('#detailKelasModal')
+      });
+    });
+
+    $('#detailKelasModal').on('hidden.bs.modal', function() {
+      // Hapus inisialisasi Select2 untuk mencegah masalah
+      $('#idSiswaSelect').select2('destroy');
+    });
+  });
+
   document.getElementById('flagKelas').value = 'add';
   $('#kelasModal').on('hidden.bs.modal', function() {
     $('#formKelas')[0].reset();
     document.getElementById('flagKelas').value = 'add';
   });
+
+  function loadDetailKelas(idKelas) {
+    // Fetch and populate data for the modal
+    document.getElementById('detailIdKelas').value = idKelas;
+    // Example AJAX call to fetch data
+    $.ajax({
+      url: 'fetchDetailKelas.php',
+      type: 'POST',
+      data: {
+        idKelas: idKelas
+      },
+      success: function(response) {
+        // Populate table body with response data
+        $('#detailKelasTableBody').html(response);
+      }
+    });
+    $('#detailKelasModal').modal('show');
+  }
 </script>

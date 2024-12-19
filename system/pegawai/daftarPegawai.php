@@ -158,75 +158,41 @@ $jabatan = query("SELECT * FROM jabatan", []);
           <input autocomplete="off" type="hidden" id="flagPegawai" name="flagPegawai">
           <div class="input-group mb-2">
             <div class="col">
-              <label for="extraNumber">NIP</label>
-              <input autocomplete="off" type="text" name="nis" id="nis" class="form-control" placeholder="Masukan NIS Pegawai" autocomplete="off">
-            </div>
-            <div class="col">
-              <label for="extraNumber">NISN</label>
-              <input autocomplete="off" type="text" name="nisn" id="nisn" class="form-control" placeholder="Masukan NISN Pegawai" autocomplete="off">
+              <label for="nip">NIP</label>
+              <input autocomplete="off" type="text" name="nip" id="nip" class="form-control" placeholder="Masukan NIP Pegawai" autocomplete="off">
             </div>
           </div>
-
           <div class="input-group mb-2">
             <div class="col">
-              <label for="extraNumber">Nama</label>
+              <label for="nama">Nama</label>
               <input autocomplete="off" type="text" name="nama" id="nama" class="form-control" placeholder="Masukan Nama Pegawai" autocomplete="off">
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="col">
-              <label for="extraNumber">Tanggal Lahir</label>
-              <input autocomplete="off" type="date" name="tglLahir" id="tglLahir" class="form-control" autocomplete="off">
-            </div>
-            <div class="col">
-              <label for="extraNumber">No Telp</label>
+              <label for="noTelp">No Telp</label>
               <input autocomplete="off" type="text" name="noTelp" id="noTelp" class="form-control" autocomplete="off" placeholder="Masukan Nomor Telp Pegawai">
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="col">
-              <label for="extraNumber">Alamat</label>
+              <label for="alamat">Alamat</label>
               <input autocomplete="off" type="text" name="alamat" id="alamat" class="form-control" placeholder="Masukan Alamat" autocomplete="off">
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="col">
-              <label for="">Kelas</label>
+              <label for="idJabatan">Jabatan</label>
               <select class="custom-select" id="idJabatan" name="idJabatan" style="width: 100%">
-                <option value="">Pilih Kelas</option>
-                <?php foreach ($kelas as $kl): ?>
-                  <option value="<?= $kl["idJabatan"] ?>">
-                    <?= $kl["nama"] ?>
-                  </option>
-                <?php endforeach; ?>
-              </select>
-            </div>
-
-            <div class="col">
-              <label for="">Angkatan</label>
-              <select class="custom-select" id="idAngkatan" name="idAngkatan" style="width: 100%">
-                <option value="">Pilih Angkatan</option>
-                <?php foreach ($angkatan as $kl): ?>
-                  <option value="<?= $kl["idAngkatan"] ?>">
-                    <?= $kl["tahunAngkatan"] ?>
-                  </option>
-                <?php endforeach; ?>
+          <option value="">Pilih Jabatan</option>
+          <?php foreach ($jabatan as $jb): ?>
+            <option value="<?= $jb["idJabatan"] ?>">
+              <?= $jb["nama"] ?>
+            </option>
+          <?php endforeach; ?>
               </select>
             </div>
           </div>
-          <div class="input-group mb-2">
-            <div class="col">
-              <label for="extraNumber">Nama Ayah</label>
-              <input autocomplete="off" type="text" name="namaAyah" id="namaAyah" class="form-control" placeholder="Masukan Nama Ayah Pegawai" autocomplete="off">
-            </div>
-            <div class="col">
-              <label for="extraNumber">Nama Ibu</label>
-              <input autocomplete="off" type="text" name="namaIbu" id="namaIbu" class="form-control" placeholder="Masukan Nama Ibu Pegawai" autocomplete="off">
-            </div>
-          </div>
-
-
-
         </form>
       </div>
       <div class="modal-footer">

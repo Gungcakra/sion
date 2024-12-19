@@ -6,7 +6,7 @@ require_once "../../library/konfigurasi.php";
 //CEK USER
 checkUserSession($db);
 
-$jurusan = query("SELECT * FROM jurusan",[])
+$jurusan = query("SELECT * FROM jurusan", [])
 ?>
 
 <!DOCTYPE html>
@@ -34,12 +34,16 @@ $jurusan = query("SELECT * FROM jurusan",[])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <!-- SweetAlert CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
     <!-- SELECT2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     <!-- Or for RTL support -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.rtl.min.css" />
+
+
+
+
 
 
 
@@ -96,8 +100,8 @@ $jurusan = query("SELECT * FROM jurusan",[])
                                 <?php  } ?>
                             </select>
                         </div>
-                      
-                        
+
+
                         <div class="ml-2 ">
                             <select class="custom-select" id="limit" name="limit" onclick="cariDaftarKelas()">
                                 <option value="10">10</option>
@@ -177,12 +181,15 @@ $jurusan = query("SELECT * FROM jurusan",[])
 
     <!-- SweetAlert JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-
     <!-- SELECT2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+
+
+
 
 </body>
 
