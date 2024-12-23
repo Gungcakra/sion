@@ -7,6 +7,7 @@ require_once "../../library/konfigurasi.php";
 checkUserSession($db);
 $idJurusanDetail = isset($_POST['idJurusanDetail']) ? $_POST['idJurusanDetail'] : '';
 $tingkat = isset($_POST['tingkat']) ? $_POST['tingkat'] : '';
+$idKelas = isset($_POST['idKelas']) ? $_POST['idKelas'] : '';
 
 $pegawai = query("SELECT * FROM pegawai WHERE idJabatan = ?", [2]);
 $siswa = query("
@@ -20,68 +21,71 @@ $siswa = query("
         WHEN YEAR(CURDATE()) - angkatan.tahunAngkatan = 2 THEN 'XII'
     END = ? AND jurusan.idJurusan = ?", [$tingkat, $idJurusanDetail]);
 
+$dataUpdate = query("SELECT detail_kelas.*,
+                             pegawai.idPegawai,
+                             pegawai.nama as namaGuru
+                        FROM detail_kelas
+                        INNER JOIN pegawai ON detail_kelas.idPegawai = pegawai.idPegawai
+                        WHERE detail_kelas.idKelas = ?", [$idKelas])[0];
+
+var_dump($dataUpdate['idPegawai']);
 ?>
+
+
 <!-- Modal Detail Kelas -->
 <div class="modal fade" id="detailKelasModal" tabindex="-1" aria-labelledby="detailKelasLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="detailKelasLabel">Detail Kelas</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
             </div>
             <div class="modal-body">
                 <form id="formDetailKelas" method="post">
-                    <input autocomplete="off" type="hidden" id="detailIdKelas" name="idKelas">
-                    <input autocomplete="off" type="hidden" id="detailIdSiswa" name="idSiswa">
+                    <input autocomplete="off" type="hidden" id="idKelas" name="idKelas" value="<?= $idKelas ?>">
 
-                    <!-- Siswa Selection -->
                     <div class="form-row mb-4">
                         <div class="col-md-6 d-flex flex-column">
-                            <label for="idSiswaSelect" class="font-weight-bold">Siswa</label>
+
+                            <label for="idPegawaiSelect" class="font-weight-bold">Guru Wali</label>
+                            <select class="form-select" id="idPegawaiSelect" name="idPegawaiSelect" data-live-search="true">
+                                <option value="">Pilih Guru Wali</option>
+                                <?php foreach ($pegawai as $gr): ?>
+                                    <option value="<?= $gr["idPegawai"] ?>" <?= isset($dataUpdate['idPegawai']) && $dataUpdate['idPegawai'] == $gr["idPegawai"] ? 'selected' : '' ?>><?= $gr["nama"] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <button type="button" class="btn btn-primary" onclick="addDetailGuru('<?= isset($dataUpdate['idPegawai']) ? 'updateDetailGuru' : 'addDetailGuru' ?>')"><?= isset($dataUpdate['idPegawai']) ? 'Update' : 'Simpan' ?></button>
+                        </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row mb-4">
+                        <div class="col-md-6 d-flex flex-column">
+    
+                        <label for="idSiswaSelect" class="font-weight-bold">Siswa</label>
                             <select class="form-select" id="idSiswaSelect" name="idSiswaSelect">
                                 <option value="">Pilih Siswa</option>
                                 <?php foreach ($siswa as $rt): ?>
                                     <option value="<?= $rt["idSiswa"] ?>"><?= $rt["nama"] ?></option>
                                 <?php endforeach; ?>
                             </select>
+    
                         </div>
+
                         <div class="col-md-6 d-flex align-items-end">
-                            <button type="button" class="btn btn-primary" onclick="addSiswaToKelas()">Add Siswa</button>
+                            <button type="button" class="btn btn-primary" onclick="prosesDetailKelas()">Simpan</button>
                         </div>
+                       
                     </div>
-
-                    <!-- Guru and Kelas Selection (Horizontal Layout) -->
-                    <div class="form-row mb-4">
-                        <div class="col-md-6 d-flex flex-column">
-
-                            <label for="idGuruSelect" class="font-weight-bold">Guru Wali</label>
-                            <select class="form-select" id="idGuruSelect" name="idGuruSelect" data-live-search="true">
-                                <option value="">Pilih Guru Wali</option>
-                                <?php foreach ($pegawai as $gr): ?>
-                                    <option value="<?= $gr["idPegawai"] ?>"><?= $gr["nama"] ?></option>
-                                <?php endforeach; ?>
-                            </select>
-
-                        </div>
-
-
-
                 </form>
 
                 <!-- Table for Displaying Siswa in Kelas -->
-                <table class="table table-striped mt-3">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">NIS</th>
-                            <th scope="col">Nama Siswa</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="detailKelasTableBody">
-                        <!-- Table rows will be populated dynamically -->
-                    </tbody>
-                </table>
+                <div id="daftarDetailKelas">
+
+                </div>
             </div>
 
             <div class="modal-footer">

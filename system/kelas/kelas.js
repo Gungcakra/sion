@@ -146,7 +146,6 @@ function cariDaftarKelas() {
 }
 
 function loadDetailKelas(kelas) {
-  ''
   const idKelas = kelas.idKelas;
   const tingkat = kelas.tingkat;
   const idJurusanDetail = kelas.idJurusan;
@@ -162,10 +161,51 @@ function loadDetailKelas(kelas) {
       $("body").append(response);
       // $("#detailKelasTableBody").html(response);
       $("#detailKelasModal").modal("show");
+      daftarDetailKelas(idKelas);
     },
   });
 }
 
+function addDetailGuru(){
+  const formDetailKelas = document.getElementById("formDetailKelas");
+  const dataForm = new FormData(formDetailKelas);
+
+  // $("#detailKelasModal").modal("hide");
+
+  dataForm.append("flagKelas", "addDetailGuru");
+
+  $.ajax({
+    url: "prosesDetailKelas.php",
+    type: "post",
+    enctype: "multipart/form-data",
+    processData: false,
+    contentType: false,
+    data: dataForm,
+    dataType: "json",
+    success: function (data) {
+      const { status, pesan } = data;
+      notifikasi(status, pesan);
+      const idKelas = dataForm.get("idKelas");
+      daftarDetailKelas(idKelas);
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.error("Error:", textStatus, errorThrown);
+    },
+  });
+ 
+}
+function daftarDetailKelas(idKelas) {
+  $.ajax({
+    url: "daftarDetailKelas.php",
+    type: "POST",
+    data: {
+      idKelas: idKelas,
+    },
+    success: function (data) {
+      $("#daftarDetailKelas").html(data);
+    },
+  });
+}
 function notifikasi(status, pesan) {
   if (status === true) {
     toastr.success(pesan);

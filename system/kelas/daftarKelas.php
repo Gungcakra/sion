@@ -63,17 +63,6 @@ $params[] = $offset;
 
 $kelas = query($query, $params);
 $jurusan = query("SELECT * FROM jurusan", []);
-$pegawai = query("SELECT * FROM pegawai WHERE idJabatan = ?", [2]);
-$siswa = query("
-    SELECT siswa.*
-    FROM siswa
-    INNER JOIN angkatan ON siswa.idAngkatan = angkatan.idAngkatan
-    INNER JOIN jurusan ON siswa.idJurusan = jurusan.idJurusan
-    WHERE CASE 
-        WHEN YEAR(CURDATE()) - angkatan.tahunAngkatan = 0 THEN 'X'
-        WHEN YEAR(CURDATE()) - angkatan.tahunAngkatan = 1 THEN 'XI'
-        WHEN YEAR(CURDATE()) - angkatan.tahunAngkatan = 2 THEN 'XII'
-    END = ? AND jurusan.idJurusan = ?", [$tingkat, $idJurusanDetail]);
 
 ?>
 
