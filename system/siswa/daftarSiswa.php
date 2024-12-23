@@ -8,7 +8,7 @@ checkUserSession($db);
 
 $flagSiswa = isset($_POST['flagSiswa']) ? $_POST['flagSiswa'] : '';
 $searchQuery = isset($_POST['searchQuery']) ? $_POST['searchQuery'] : '';
-$idKelas = isset($_POST['idKelas']) ? $_POST['idKelas'] : '';
+$idJurusan = isset($_POST['idJurusan']) ? $_POST['idJurusan'] : '';
 $idAngkatan = isset($_POST['idAngkatan']) ? $_POST['idAngkatan'] : '';
 $limit = isset($_POST['limit']) ? $_POST['limit'] : 10;
 $page = isset($_POST['page']) ? $_POST['page'] : 1;
@@ -20,10 +20,10 @@ if ($flagSiswa === 'cari') {
   $conditions = '';
   $params = [];
 
-  // Filter berdasarkan idKelas
-  if (!empty($idKelas)) {
-    $conditions .= " WHERE siswa.idKelas = ?";
-    $params[] = $idKelas;
+  // Filter berdasarkan idJurusan
+  if (!empty($idJurusan)) {
+    $conditions .= " WHERE siswa.idJurusan = ?";
+    $params[] = $idJurusan;
   }
 
   if (!empty($idAngkatan)) {
@@ -50,7 +50,7 @@ if ($flagSiswa === 'cari') {
 // Total data untuk pagination
 $totalQuery = "SELECT COUNT(*) as total 
              FROM siswa 
-             INNER JOIN kelas ON siswa.idKelas = kelas.idKelas
+             INNER JOIN jurusan ON siswa.idJurusan = jurusan.idJurusan
              INNER JOIN angkatan ON siswa.idAngkatan = angkatan.idAngkatan " . $conditions;
 $totalResult = query($totalQuery, $params);
 $totalRecords = $totalResult[0]['total'];
@@ -58,7 +58,7 @@ $totalPages = ceil($totalRecords / $limit);
 
 // Query utama
 $query = "SELECT siswa.*, 
-               kelas.kode AS kodeKelas, 
+               jurusan.namaJurusan, 
                siswa.idSiswa,
                angkatan.tahunAngkatan, 
                CASE   
@@ -68,7 +68,7 @@ $query = "SELECT siswa.*,
                    ELSE 'Lulus'
                END AS tingkat 
         FROM siswa 
-        INNER JOIN kelas ON siswa.idKelas = kelas.idKelas
+        INNER JOIN jurusan ON siswa.idJurusan = jurusan.idJurusan
         INNER JOIN angkatan ON siswa.idAngkatan = angkatan.idAngkatan " . $conditions .
   " ORDER BY angkatan.tahunAngkatan DESC LIMIT ? OFFSET ?";
 $params[] = $limit;
@@ -76,7 +76,7 @@ $params[] = $offset;
 
 $siswa = query($query, $params);
 
-$kelas = query("SELECT * FROM kelas", []);
+$jurusan = query("SELECT * FROM jurusan", []);
 $angkatan = query("SELECT * FROM angkatan", []);
 
 // var_dump($siswa[0])
@@ -93,7 +93,7 @@ $angkatan = query("SELECT * FROM angkatan", []);
         <th scope="col">Nama</th>
         <th scope="col">Angkatan</th>
         <th scope="col">Tingkat</th>
-        <th scope="col">Kelas</th>
+        <th scope="col">Jurusan</th>
         <th scope="col">Status</th>
       </tr>
     </thead>
@@ -124,7 +124,7 @@ $angkatan = query("SELECT * FROM angkatan", []);
             <td><?= $rm['nama'] ?></td>
             <td><?= $rm['tahunAngkatan'] ?></td>
             <td><?= $rm['tingkat'] ?></td>
-            <td><?= $rm['kodeKelas'] ?></td>
+            <td><?= $rm['namaJurusan'] ?></td>
             <td><a class="p-1 text-white rounded font-weight-bold bg-<?= $rm['status'] == "Aktif" ? "success" : "danger"  ?>"><?= $rm['status'] ?></a></td>
           </tr>
         <?php
@@ -216,10 +216,10 @@ $angkatan = query("SELECT * FROM angkatan", []);
           <div class="input-group mb-2">
             <div class="col">
               <label for="">Kelas</label>
-              <select class="custom-select" id="idKelas" name="idKelas" style="width: 100%">
+              <select class="custom-select" id="idJurusan" name="idJurusan" style="width: 100%">
                 <option value="">Pilih Kelas</option>
-                <?php foreach ($kelas as $kl): ?>
-                  <option value="<?= $kl["idKelas"] ?>">
+                <?php foreach ($jurusan as $kl): ?>
+                  <option value="<?= $kl["idJurusan"] ?>">
                     <?= $kl["nama"] ?>
                   </option>
                 <?php endforeach; ?>

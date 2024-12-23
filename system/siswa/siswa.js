@@ -99,7 +99,7 @@ function loadPage(pageNumber) {
 }
 
 // $(document).ready(function () {
-//   $('#idKelas').select2();
+//   $('#idJurusan').select2();
 // });
 function editSiswaModal(siswa) {
   document.getElementById("idSiswa").value = siswa.idSiswa;
@@ -111,8 +111,8 @@ function editSiswaModal(siswa) {
   document.getElementById("noTelp").value = siswa.noTelp;
   document.getElementById("tglLahir").value = siswa.tglLahir;
 
-  const selectKelas = document.getElementById("idKelas");
-  selectKelas.value = siswa.idKelas;
+  const selectKelas = document.getElementById("idJurusan");
+  selectKelas.value = siswa.idJurusan;
   const selectAngkatan = document.getElementById("idAngkatan");
   selectAngkatan.value = siswa.idAngkatan;
   document.getElementById("alamat").value = siswa.alamat;
@@ -122,16 +122,16 @@ function editSiswaModal(siswa) {
 
 function cariDaftarSiswa() {
   const searchQuery = $("#searchQuery").val();
-  const idKelas = $("#idKelasSearch").val();
+  const idJurusan = $("#idJurusanSearch").val();
   const idAngkatan = $("#idAngkatanSearch").val();
   const limit = $("#limit").val();
-  if (searchQuery || idKelas || limit) {
+  if (searchQuery || idJurusan || limit) {
     $.ajax({
       url: "daftarSiswa.php",
       type: "post",
       data: {
         searchQuery: searchQuery,
-        idKelas: idKelas,
+        idJurusan: idJurusan,
         idAngkatan: idAngkatan,
         limit: limit,
         flagSiswa: "cari",

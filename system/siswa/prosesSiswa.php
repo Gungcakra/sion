@@ -19,11 +19,11 @@ if (isset($_POST['flagSiswa']) && $_POST['flagSiswa'] === 'add') {
     $namaAyah = $_POST['namaAyah'];
     $namaIbu = $_POST['namaIbu'];
     $idAngkatan = $_POST['idAngkatan'];
-    $idKelas = $_POST['idKelas'];
+    $idJurusan = $_POST['idJurusan'];
 
-    $query = "INSERT INTO siswa (nis, nisn, nama, alamat, tglLahir, noTelp, namaAyah, namaIbu, status, idAngkatan, idKelas) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO siswa (nis, nisn, nama, alamat, tglLahir, noTelp, namaAyah, namaIbu, status, idAngkatan, idJurusan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    $result = query($query, [$nis, $nisn, $nama, $alamat, $tglLahir, $noTelp, $namaAyah, $namaIbu, 'Aktif', $idAngkatan, $idKelas]);
+    $result = query($query, [$nis, $nisn, $nama, $alamat, $tglLahir, $noTelp, $namaAyah, $namaIbu, 'Aktif', $idAngkatan, $idJurusan]);
     if ($result > 0) {
         echo json_encode([
             "status" => true,
@@ -79,7 +79,7 @@ if (isset($_POST['flagSiswa']) && $_POST['flagSiswa'] === 'add') {
     $namaAyah = $_POST['namaAyah'];
     $namaIbu = $_POST['namaIbu'];
     $idAngkatan = $_POST['idAngkatan'];
-    $idKelas = $_POST['idKelas'];
+    $idJurusan = $_POST['idJurusan'];
     $idSiswa = $_POST['idSiswa'];
     $query = "UPDATE siswa 
           SET nis = ?, 
@@ -91,9 +91,9 @@ if (isset($_POST['flagSiswa']) && $_POST['flagSiswa'] === 'add') {
               namaAyah = ?, 
               namaIbu = ?, 
               idAngkatan = ?, 
-              idKelas = ? 
+              idJurusan = ? 
           WHERE idSiswa = ?";
-    $result = query($query, [$nis, $nisn, $nama, $alamat, $tglLahir, $noTelp, $namaAyah, $namaIbu, $idAngkatan, $idKelas, $idSiswa]);
+    $result = query($query, [$nis, $nisn, $nama, $alamat, $tglLahir, $noTelp, $namaAyah, $namaIbu, $idAngkatan, $idJurusan, $idSiswa]);
 
     if ($result) {
         echo json_encode([

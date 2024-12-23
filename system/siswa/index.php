@@ -6,7 +6,7 @@ require_once "../../library/konfigurasi.php";
 //CEK USER
 checkUserSession($db);
 
-$kelas = query("SELECT * FROM kelas", []);
+$jurusan = query("SELECT * FROM jurusan", []);
 $angkatan = query("SELECT * FROM angkatan", []);
 ?>
 
@@ -87,13 +87,13 @@ $angkatan = query("SELECT * FROM angkatan", []);
                             </div>
                         </form>
                         <div class="ml-2 col-2 p-0">
-                            <select class="custom-select" id="idKelasSearch" name="idKelasSearch" onclick="cariDaftarSiswa()">
+                            <select class="custom-select" id="idJurusanSearch" name="idJurusanSearch" onclick="cariDaftarSiswa()">
                                 <option value="" select>Semua Kelas</option>
                                 <?php
-                                foreach ($kelas as $kl) {
+                                foreach ($jurusan as $kl) {
 
                                 ?>
-                                    <option value="<?= $kl['idKelas'] ?>"><?= $kl['kode'] ?></option>
+                                    <option value="<?= $kl['idJurusan'] ?>"><?= $kl['kode'] ?></option>
                                 <?php  } ?>
                             </select>
                         </div>

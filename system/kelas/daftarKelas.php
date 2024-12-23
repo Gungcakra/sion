@@ -9,6 +9,8 @@ checkUserSession($db);
 $flagKelas = isset($_POST['flagKelas']) ? $_POST['flagKelas'] : '';
 $searchQuery = isset($_POST['searchQuery']) ? $_POST['searchQuery'] : '';
 $idJurusan = isset($_POST['idJurusan']) ? $_POST['idJurusan'] : '';
+$idJurusanDetail = isset($_POST['idJurusanDetail']) ? $_POST['idJurusanDetail'] : '';
+$tingkat = isset($_POST['tingkat']) ? $_POST['tingkat'] : '';
 $limit = isset($_POST['limit']) ? $_POST['limit'] : 10;
 $page = isset($_POST['page']) ? $_POST['page'] : 1;
 $offset = ($page - 1) * $limit;
@@ -53,17 +55,28 @@ $totalPages = ceil($totalRecords / $limit);
 $query = "SELECT kelas.idKelas,
                  kelas.nama,
                  jurusan.idJurusan,
-                 kelas.kode, 
+                 kelas.tingkat, 
                  jurusan.namaJurusan 
-          FROM kelas INNER JOIN jurusan ON kelas.idJurusan = jurusan.idJurusan " . $conditions . " ORDER BY kelas.kode ASC LIMIT ? OFFSET ?";
+          FROM kelas INNER JOIN jurusan ON kelas.idJurusan = jurusan.idJurusan " . $conditions . " ORDER BY kelas.nama ASC LIMIT ? OFFSET ?";
 $params[] = $limit;
 $params[] = $offset;
 
 $kelas = query($query, $params);
 $jurusan = query("SELECT * FROM jurusan", []);
-$siswa = query("SELECT * FROM siswa", []);
+$pegawai = query("SELECT * FROM pegawai WHERE idJabatan = ?", [2]);
+$siswa = query("
+    SELECT siswa.*
+    FROM siswa
+    INNER JOIN angkatan ON siswa.idAngkatan = angkatan.idAngkatan
+    INNER JOIN jurusan ON siswa.idJurusan = jurusan.idJurusan
+    WHERE CASE 
+        WHEN YEAR(CURDATE()) - angkatan.tahunAngkatan = 0 THEN 'X'
+        WHEN YEAR(CURDATE()) - angkatan.tahunAngkatan = 1 THEN 'XI'
+        WHEN YEAR(CURDATE()) - angkatan.tahunAngkatan = 2 THEN 'XII'
+    END = ? AND jurusan.idJurusan = ?", [$tingkat, $idJurusanDetail]);
 
-// var_dump($siswa[0])
+
+var_dump($tingkat )
 ?>
 
 <div class="card shadow mb-2 w-100">
@@ -74,7 +87,6 @@ $siswa = query("SELECT * FROM siswa", []);
         <th scope="col">Action</th>
         <th scope="col">Kelas</th>
         <th scope="col">Jurusan</th>
-        <th scope="col">Detail</th>
       </tr>
     </thead>
     <tbody>
@@ -97,19 +109,13 @@ $siswa = query("SELECT * FROM siswa", []);
                 <button type="button" class="btn btn-danger btn-sm tombol-dropdown-last" onclick="deleteKelas('<?= $rm['idKelas'] ?>')">
                   <i class="fa fa-trash"></i> <strong>DELETE</strong>
                 </button>
-                <button type="button" class="btn btn-info btn-sm tombol-dropdown-last" onclick="loadDetailKelas('<?= $rm['idKelas'] ?>')">
+                <button type="button" class="btn btn-info btn-sm tombol-dropdown-last" onclick="loadDetailKelas(<?= htmlspecialchars(json_encode($rm)) ?>)">
                   <i class="fa fa-info-circle"></i> <strong>DETAIL</strong>
                 </button>
               </div>
             </td>
-            <td><?= $rm['kode'] ?></td>
+            <td><?= $rm['nama'] ?></td>
             <td><?= $rm['namaJurusan'] ?></td>
-
-            <td>
-              <button type="button" class="btn btn-info btn-sm" onclick="loadDetailKelas('<?= $rm['idKelas'] ?>')">
-                <i class="fa fa-info-circle"></i> Detail
-              </button>
-            </td>
           </tr>
         <?php
           $no++;
@@ -167,10 +173,6 @@ $siswa = query("SELECT * FROM siswa", []);
               <label for="nama" class="form-label">Nama Kelas</label>
               <input type="text" name="nama" id="nama" class="form-control" placeholder="Masukkan Nama Kelas" autocomplete="off">
             </div>
-            <div class="col">
-              <label for="kode" class="form-label">Kode Kelas</label>
-              <input type="text" name="kode" id="kode" class="form-control" placeholder="Masukkan Kode Kelas" autocomplete="off">
-            </div>
           </div>
           <div class="row mb-3">
             <div class="col">
@@ -226,30 +228,19 @@ $siswa = query("SELECT * FROM siswa", []);
 
           <!-- Guru and Kelas Selection (Horizontal Layout) -->
           <div class="form-row mb-4">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="idGuruSelect" class="font-weight-bold">Guru</label>
+            <div class="col-md-6 d-flex flex-column">
+             
+                <label for="idGuruSelect" class="font-weight-bold">Guru Wali</label>
                 <select class="form-select" id="idGuruSelect" name="idGuruSelect" data-live-search="true">
-                  <option value="">Pilih Guru</option>
-                  <?php foreach ($guru as $gr): ?>
-                    <option value="<?= $gr["idGuru"] ?>"><?= $gr["nama"] ?></option>
+                  <option value="">Pilih Guru Wali</option>
+                  <?php foreach ($pegawai as $gr): ?>
+                    <option value="<?= $gr["idPegawai"] ?>"><?= $gr["nama"] ?></option>
                   <?php endforeach; ?>
                 </select>
-              </div>
+              
             </div>
 
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="idKelasSelect" class="font-weight-bold">Kelas</label>
-                <select class="form-select" id="idKelasSelect" name="idKelasSelect" data-live-search="true">
-                  <option value="">Pilih Kelas</option>
-                  <?php foreach ($kelas as $kl): ?>
-                    <option value="<?= $kl["idKelas"] ?>"><?= $kl["nama"] ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-            </div>
-          </div>
+            
 
         </form>
 
@@ -285,6 +276,9 @@ $siswa = query("SELECT * FROM siswa", []);
       $('#idSiswaSelect').select2({
         dropdownParent: $('#detailKelasModal')
       });
+      $('#idGuruSelect').select2({
+        dropdownParent: $('#detailKelasModal')
+      });
     });
 
     $('#detailKelasModal').on('hidden.bs.modal', function() {
@@ -299,21 +293,5 @@ $siswa = query("SELECT * FROM siswa", []);
     document.getElementById('flagKelas').value = 'add';
   });
 
-  function loadDetailKelas(idKelas) {
-    // Fetch and populate data for the modal
-    document.getElementById('detailIdKelas').value = idKelas;
-    // Example AJAX call to fetch data
-    $.ajax({
-      url: 'fetchDetailKelas.php',
-      type: 'POST',
-      data: {
-        idKelas: idKelas
-      },
-      success: function(response) {
-        // Populate table body with response data
-        $('#detailKelasTableBody').html(response);
-      }
-    });
-    $('#detailKelasModal').modal('show');
-  }
+  
 </script>

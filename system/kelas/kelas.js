@@ -102,10 +102,9 @@ function loadPage(pageNumber) {
 //   $('#idKelas').select2();
 // });
 function editKelasModal(kelas) {
-  console.log(kelas.idJurusan)
+  console.log(kelas.idJurusan);
   document.getElementById("idKelas").value = kelas.idKelas;
   document.getElementById("nama").value = kelas.nama;
-  document.getElementById("kode").value = kelas.kode;
   const selectJurusan = document.getElementById("idJurusan");
   selectJurusan.value = kelas.idJurusan;
   document.getElementById("flagKelas").value = "update";
@@ -144,6 +143,39 @@ function cariDaftarKelas() {
     });
   }
 }
+
+function loadDetailKelas(kelas) {
+  const idKelas = kelas.idKelas;
+  const tingkat = kelas.tingkat;
+  const idJurusanDetail = kelas.idJurusan;
+  console.log("ID Kelas:", idKelas);
+  console.log("Tingkat:", tingkat);
+  console.log("ID Jurusan:", idJurusanDetail);
+  $.ajax({
+    url: "daftarKelas.php",
+    type: "POST",
+    data: {
+      idKelas: idKelas,
+      tingkat: tingkat,
+      idJurusanDetail: idJurusanDetail,
+    },
+    success: function (response) {
+      console.log("Response:", response);
+      // $("#detailKelasTableBody").html(response);
+    },
+    error: function (xhr, status, error) {
+      console.error("Error:", status, error);
+      console.error("Response Text:", xhr.responseText);
+    },
+    complete: function () {
+      console.log("AJAX request completed.");
+    },
+  });
+
+  $("#detailKelasModal").modal("show");
+}
+
+
 function notifikasi(status, pesan) {
   if (status === true) {
     toastr.success(pesan);
