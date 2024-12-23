@@ -149,6 +149,7 @@ function loadDetailKelas(kelas) {
   const idKelas = kelas.idKelas;
   const tingkat = kelas.tingkat;
   const idJurusanDetail = kelas.idJurusan;
+  const idGuru = kelas.idGuru;
 
   $.ajax({
     url: "detailKelas.php",
@@ -157,10 +158,16 @@ function loadDetailKelas(kelas) {
       idKelas: idKelas,
       tingkat: tingkat,
       idJurusanDetail: idJurusanDetail,
+      idGuru: idGuru,
     },
     success: function (response) {
       $("body").append(response);
       $("#detailKelasModal").modal("show");
+      const selectIdPegawai = $("#idPegawaiSelect");
+      if(idGuru !== null){
+
+        selectIdPegawai.val(idGuru).trigger("change");
+      } 
       daftarDetailKelas(idKelas);
     },
   });
@@ -208,11 +215,6 @@ function daftarDetailKelas(idKelas) {
 
 function closeDetailModal() {
   $("#detailKelasModal").modal("hide");
-  $("#detailKelasModal").on("hidden.bs.modal", function () {
-    // Reset elemen select ke default (placeholder)
-    $("#idPegawaiSelect").val("").trigger("change");
-    $("#idSiswaSelect").val("").trigger("change");
-  });
 }
 function notifikasi(status, pesan) {
   if (status === true) {

@@ -8,6 +8,7 @@ checkUserSession($db);
 $idJurusanDetail = isset($_POST['idJurusanDetail']) ? $_POST['idJurusanDetail'] : '';
 $tingkat = isset($_POST['tingkat']) ? $_POST['tingkat'] : '';
 $idKelas = isset($_POST['idKelas']) ? $_POST['idKelas'] : '';
+$idGuru = isset($_POST['idGuru']) ? $_POST['idGuru'] : '';
 
 $pegawai = query("SELECT * FROM pegawai WHERE idJabatan = ?", [2]);
 $siswa = query("
@@ -22,17 +23,6 @@ $siswa = query("
     END = ? AND jurusan.idJurusan = ?", [$tingkat, $idJurusanDetail]);
 
 
-$dataUpdate = query("SELECT detail_kelas.*,
-                             pegawai.idPegawai,
-                             pegawai.nama as namaGuru
-                        FROM detail_kelas
-                        INNER JOIN pegawai ON detail_kelas.idPegawai = pegawai.idPegawai
-                        WHERE detail_kelas.idKelas = ?", [$idKelas])[0];
-$dataPegawai = query("SELECT pegawai.idPegawai, pegawai.nama as namaGuru
-                        FROM pegawai
-                        WHERE pegawai.idPegawai NOT IN (SELECT detail_kelas.idPegawai
-                                                        FROM detail_kelas
-                                                        WHERE detail_kelas.idKelas = ?)", [$idKelas]);
 
 
 ?>
@@ -49,6 +39,7 @@ $dataPegawai = query("SELECT pegawai.idPegawai, pegawai.nama as namaGuru
             <div class="modal-body">
                 <form id="formDetailKelas" method="post">
                     <input autocomplete="off" type="hidden" id="idKelas" name="idKelas" value="<?= $idKelas ?>">
+                   
 
                     <div class="form-row mb-4">
                         <div class="col-md-6 d-flex flex-column">
@@ -57,7 +48,7 @@ $dataPegawai = query("SELECT pegawai.idPegawai, pegawai.nama as namaGuru
                             <select class="form-select" id="idPegawaiSelect" name="idPegawaiSelect" data-live-search="true">
                                 <option value="">Pilih Guru Wali</option>
                                 <?php foreach ($pegawai as $gr): ?>
-                                    <option value="<?= $gr["idPegawai"] ?>" <?= isset($dataUpdate['idPegawai']) && $dataUpdate['idPegawai'] == $gr["idPegawai"] ? 'selected' : '' ?>><?= $gr["nama"] ?></option>
+                                    <option value="<?= $gr["idPegawai"] ?>"><?= $gr["nama"] ?></option>
                                 <?php endforeach; ?>
                             </select>
 
@@ -102,12 +93,13 @@ $dataPegawai = query("SELECT pegawai.idPegawai, pegawai.nama as namaGuru
 </div>
 <script>
     $(document).ready(function() {
+  
         $('#detailKelasModal').on('shown.bs.modal', function() {
             // Inisialisasi Select2 saat modal ditampilkan
             $('#idSiswaSelect').select2({
                 dropdownParent: $('#detailKelasModal')
             });
-            $('#idGuruSelect').select2({
+            $('#idPegawaiSelect').select2({
                 dropdownParent: $('#detailKelasModal')
             });
         });
@@ -115,6 +107,8 @@ $dataPegawai = query("SELECT pegawai.idPegawai, pegawai.nama as namaGuru
         $('#detailKelasModal').on('hidden.bs.modal', function() {
             // Hapus inisialisasi Select2 untuk mencegah masalah
             $('#idSiswaSelect').select2('destroy');
+            $('#idPegawaiSelect').select2('destroy');
+            $('#idPegawaiSelect').val('').trigger('change');
         });
     });
 </script>

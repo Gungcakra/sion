@@ -45,19 +45,23 @@ if ($flagKelas === 'cari') {
 
 // Total data untuk pagination
 $totalQuery = "SELECT COUNT(*) as total 
-             FROM kelas 
-             INNER JOIN jurusan ON kelas.idJurusan = jurusan.idJurusan" . $conditions;
+       FROM kelas 
+       INNER JOIN jurusan ON kelas.idJurusan = jurusan.idJurusan
+       LEFT JOIN detail_kelas ON kelas.idKelas = detail_kelas.idKelas" . $conditions;
 $totalResult = query($totalQuery, $params);
 $totalRecords = $totalResult[0]['total'];
 $totalPages = ceil($totalRecords / $limit);
 
 // Query utama
 $query = "SELECT kelas.idKelas,
-                 kelas.nama,
-                 jurusan.idJurusan,
-                 kelas.tingkat, 
-                 jurusan.namaJurusan 
-          FROM kelas INNER JOIN jurusan ON kelas.idJurusan = jurusan.idJurusan " . $conditions . " ORDER BY kelas.nama ASC LIMIT ? OFFSET ?";
+         kelas.nama,
+         jurusan.idJurusan,
+         kelas.tingkat, 
+         jurusan.namaJurusan,
+         detail_kelas.idPegawai as idGuru
+      FROM kelas 
+      INNER JOIN jurusan ON kelas.idJurusan = jurusan.idJurusan
+      LEFT JOIN detail_kelas ON kelas.idKelas = detail_kelas.idKelas" . $conditions . " ORDER BY kelas.nama ASC LIMIT ? OFFSET ?";
 $params[] = $limit;
 $params[] = $offset;
 
@@ -82,6 +86,7 @@ $jurusan = query("SELECT * FROM jurusan", []);
 
         $no = $offset + 1;
         foreach ($kelas as $rm):
+        
       ?>
           <tr>
             <td><?= $no ?></td>
