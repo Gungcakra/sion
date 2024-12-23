@@ -29,7 +29,7 @@ checkUserSession($db);
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="<?= BASE_URL_HTML ?>/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL_HTML ?>/assets/css/sb-admin-2.min.css" rel="stylesheet">
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <!-- SweetAlert CSS -->
@@ -161,14 +161,14 @@ checkUserSession($db);
     <script src="<?= BASE_URL_HTML ?>/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="<?= BASE_URL_HTML ?>/js/sb-admin-2.min.js"></script>
+    <script src="<?= BASE_URL_HTML ?>/assets/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
     <script src="<?= BASE_URL_HTML ?>/vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="<?= BASE_URL_HTML ?>/js/demo/chart-area-demo.js"></script>
-    <script src="<?= BASE_URL_HTML ?>/js/demo/chart-pie-demo.js"></script>
+    <script src="<?= BASE_URL_HTML ?>/assets/js/demo/chart-area-demo.js"></script>
+    <script src="<?= BASE_URL_HTML ?>/assets/js/demo/chart-pie-demo.js"></script>
     <script src="<?= BASE_URL_HTML ?>/system/user/user.js"></script>
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
