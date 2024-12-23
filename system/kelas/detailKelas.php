@@ -21,14 +21,20 @@ $siswa = query("
         WHEN YEAR(CURDATE()) - angkatan.tahunAngkatan = 2 THEN 'XII'
     END = ? AND jurusan.idJurusan = ?", [$tingkat, $idJurusanDetail]);
 
+
 $dataUpdate = query("SELECT detail_kelas.*,
                              pegawai.idPegawai,
                              pegawai.nama as namaGuru
                         FROM detail_kelas
                         INNER JOIN pegawai ON detail_kelas.idPegawai = pegawai.idPegawai
                         WHERE detail_kelas.idKelas = ?", [$idKelas])[0];
+$dataPegawai = query("SELECT pegawai.idPegawai, pegawai.nama as namaGuru
+                        FROM pegawai
+                        WHERE pegawai.idPegawai NOT IN (SELECT detail_kelas.idPegawai
+                                                        FROM detail_kelas
+                                                        WHERE detail_kelas.idKelas = ?)", [$idKelas]);
 
-var_dump($dataUpdate['idPegawai']);
+
 ?>
 
 
@@ -59,40 +65,40 @@ var_dump($dataUpdate['idPegawai']);
                         <div class="col-md-6 d-flex align-items-end">
                             <button type="button" class="btn btn-primary" onclick="addDetailGuru('<?= isset($dataUpdate['idPegawai']) ? 'updateDetailGuru' : 'addDetailGuru' ?>')"><?= isset($dataUpdate['idPegawai']) ? 'Update' : 'Simpan' ?></button>
                         </div>
-                        </div>
                     </div>
-                    
                     <div class="form-row mb-4">
                         <div class="col-md-6 d-flex flex-column">
-    
-                        <label for="idSiswaSelect" class="font-weight-bold">Siswa</label>
+
+                            <label for="idSiswaSelect" class="font-weight-bold">Siswa</label>
                             <select class="form-select" id="idSiswaSelect" name="idSiswaSelect">
                                 <option value="">Pilih Siswa</option>
                                 <?php foreach ($siswa as $rt): ?>
                                     <option value="<?= $rt["idSiswa"] ?>"><?= $rt["nama"] ?></option>
                                 <?php endforeach; ?>
                             </select>
-    
+
                         </div>
 
                         <div class="col-md-6 d-flex align-items-end">
                             <button type="button" class="btn btn-primary" onclick="prosesDetailKelas()">Simpan</button>
                         </div>
-                       
+
                     </div>
-                </form>
+                    <!-- Table for Displaying Siswa in Kelas -->
+                    <div id="daftarDetailKelas">
 
-                <!-- Table for Displaying Siswa in Kelas -->
-                <div id="daftarDetailKelas">
-
-                </div>
+                    </div>
             </div>
 
+            </form>
+
+
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeDetailModal()">Close</button>
             </div>
         </div>
     </div>
+</div>
 </div>
 <script>
     $(document).ready(function() {

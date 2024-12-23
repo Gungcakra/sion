@@ -149,6 +149,7 @@ function loadDetailKelas(kelas) {
   const idKelas = kelas.idKelas;
   const tingkat = kelas.tingkat;
   const idJurusanDetail = kelas.idJurusan;
+
   $.ajax({
     url: "detailKelas.php",
     type: "POST",
@@ -159,14 +160,13 @@ function loadDetailKelas(kelas) {
     },
     success: function (response) {
       $("body").append(response);
-      // $("#detailKelasTableBody").html(response);
       $("#detailKelasModal").modal("show");
       daftarDetailKelas(idKelas);
     },
   });
 }
 
-function addDetailGuru(){
+function addDetailGuru() {
   const formDetailKelas = document.getElementById("formDetailKelas");
   const dataForm = new FormData(formDetailKelas);
 
@@ -192,7 +192,6 @@ function addDetailGuru(){
       console.error("Error:", textStatus, errorThrown);
     },
   });
- 
 }
 function daftarDetailKelas(idKelas) {
   $.ajax({
@@ -204,6 +203,15 @@ function daftarDetailKelas(idKelas) {
     success: function (data) {
       $("#daftarDetailKelas").html(data);
     },
+  });
+}
+
+function closeDetailModal() {
+  $("#detailKelasModal").modal("hide");
+  $("#detailKelasModal").on("hidden.bs.modal", function () {
+    // Reset elemen select ke default (placeholder)
+    $("#idPegawaiSelect").val("").trigger("change");
+    $("#idSiswaSelect").val("").trigger("change");
   });
 }
 function notifikasi(status, pesan) {
