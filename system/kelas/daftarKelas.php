@@ -75,8 +75,6 @@ $siswa = query("
         WHEN YEAR(CURDATE()) - angkatan.tahunAngkatan = 2 THEN 'XII'
     END = ? AND jurusan.idJurusan = ?", [$tingkat, $idJurusanDetail]);
 
-
-var_dump($tingkat )
 ?>
 
 <div class="card shadow mb-2 w-100">
@@ -173,6 +171,10 @@ var_dump($tingkat )
               <label for="nama" class="form-label">Nama Kelas</label>
               <input type="text" name="nama" id="nama" class="form-control" placeholder="Masukkan Nama Kelas" autocomplete="off">
             </div>
+            <div class="col">
+              <label for="nama" class="form-label">Tingkat</label>
+              <input type="text" name="tingkat" id="tingkat" class="form-control" placeholder="Masukkan Tingkat Kelas" autocomplete="off">
+            </div>
           </div>
           <div class="row mb-3">
             <div class="col">
@@ -197,95 +199,11 @@ var_dump($tingkat )
 
 
 
-<!-- Modal Detail Kelas -->
-<div class="modal fade" id="detailKelasModal" tabindex="-1" aria-labelledby="detailKelasLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="detailKelasLabel">Detail Kelas</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="formDetailKelas" method="post">
-          <input autocomplete="off" type="hidden" id="detailIdKelas" name="idKelas">
-          <input autocomplete="off" type="hidden" id="detailIdSiswa" name="idSiswa">
 
-          <!-- Siswa Selection -->
-          <div class="form-group mb-4">
-            <label for="idSiswaSelect" class="font-weight-bold">Siswa</label>
-            <div class="input-group">
-              <select class="form-select" id="idSiswaSelect" name="idSiswaSelect" data-live-search="true">
-                <option value="">Pilih Siswa</option>
-                <?php foreach ($siswa as $rt): ?>
-                  <option value="<?= $rt["idSiswa"] ?>"><?= $rt["nama"] ?></option>
-                <?php endforeach; ?>
-              </select>
-              <div class="input-group-append">
-                <button type="button" class="btn btn-primary" onclick="addSiswaToKelas()">Add Siswa</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Guru and Kelas Selection (Horizontal Layout) -->
-          <div class="form-row mb-4">
-            <div class="col-md-6 d-flex flex-column">
-             
-                <label for="idGuruSelect" class="font-weight-bold">Guru Wali</label>
-                <select class="form-select" id="idGuruSelect" name="idGuruSelect" data-live-search="true">
-                  <option value="">Pilih Guru Wali</option>
-                  <?php foreach ($pegawai as $gr): ?>
-                    <option value="<?= $gr["idPegawai"] ?>"><?= $gr["nama"] ?></option>
-                  <?php endforeach; ?>
-                </select>
-              
-            </div>
-
-            
-
-        </form>
-
-        <!-- Table for Displaying Siswa in Kelas -->
-        <table class="table table-striped mt-3">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">NIS</th>
-              <th scope="col">Nama Siswa</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody id="detailKelasTableBody">
-            <!-- Table rows will be populated dynamically -->
-          </tbody>
-        </table>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 
 <script>
-  $(document).ready(function() {
-    $('#detailKelasModal').on('shown.bs.modal', function() {
-      // Inisialisasi Select2 saat modal ditampilkan
-      $('#idSiswaSelect').select2({
-        dropdownParent: $('#detailKelasModal')
-      });
-      $('#idGuruSelect').select2({
-        dropdownParent: $('#detailKelasModal')
-      });
-    });
-
-    $('#detailKelasModal').on('hidden.bs.modal', function() {
-      // Hapus inisialisasi Select2 untuk mencegah masalah
-      $('#idSiswaSelect').select2('destroy');
-    });
-  });
 
   document.getElementById('flagKelas').value = 'add';
   $('#kelasModal').on('hidden.bs.modal', function() {
@@ -293,5 +211,6 @@ var_dump($tingkat )
     document.getElementById('flagKelas').value = 'add';
   });
 
+  
   
 </script>

@@ -11,12 +11,12 @@ checkUserSession($db);
 if (isset($_POST['flagKelas']) && $_POST['flagKelas'] === 'add') {
 
     $nama = $_POST['nama'];
-    $kode = $_POST['kode'];
+    $tingkat = $_POST['tingkat'];
     $idJurusan = $_POST['idJurusan'];
 
-    $query = "INSERT INTO kelas (nama, kode, idJurusan) VALUES (?, ?, ?)";
+    $query = "INSERT INTO kelas (nama, tingkat, idJurusan) VALUES (?, ?, ?)";
 
-    $result = query($query, [$nama, $kode, $idJurusan]);
+    $result = query($query, [$nama, $tingkat, $idJurusan]);
     if ($result > 0) {
         echo json_encode([
             "status" => true,
@@ -64,15 +64,15 @@ if (isset($_POST['flagKelas']) && $_POST['flagKelas'] === 'add') {
     //     exit;
     // }
     $nama = $_POST['nama'];
-    $kode = $_POST['kode'];
+    $tingkat = $_POST['tingkat'];
     $idJurusan = $_POST['idJurusan'];
     $idKelas = $_POST['idKelas'];
     $query = "UPDATE kelas 
       SET nama = ?, 
-          kode = ?, 
+          tingkat = ?, 
           idJurusan = ? 
       WHERE idKelas = ?";
-    $result = query($query, [$nama, $kode, $idJurusan, $idKelas]);
+    $result = query($query, [$nama, $tingkat, $idJurusan, $idKelas]);
 
     if ($result) {
         echo json_encode([
